@@ -12,7 +12,7 @@ RUN pip install "jupyterlab==1.1.4" voila
 ENV NODE_OPTIONS="--max-old-space-size=4096"
 RUN jupyter labextension install @jupyter-widgets/jupyterlab-manager@1.0 --no-build && \
   jupyter labextension install @jupyterlab/celltags --no-build && \ 
-  jupyter labextension install @jupyterlab/toc --no-build && \
+  jupyter labextension install @jupyterlab/toc --no-build
   # this is not working..? I can't seem to get it to fail when I run it manually inside the above layer.
   # build and clean assets, from: https://github.com/jupyterlab/jupyterlab/issues/4930#issuecomment-446597498
   # jupyter lab build && \
