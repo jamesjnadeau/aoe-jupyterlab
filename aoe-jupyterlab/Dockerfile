@@ -23,7 +23,7 @@ RUN jupyter labextension install @jupyter-widgets/jupyterlab-manager@1.0 --no-bu
   # rm -rf $HOME/.local 
 
 # Copy in our custom extension that loads our init.ipynb 
-COPY --chown=$NB_UID:$NB_GID aoe_init.py /home/$NB_USER/.ipython/extensions/aoe_init.py
+COPY aoe_init.py /home/$NB_USER/.ipython/extensions/aoe_init.py
 
 # fix permissions on folders so end user can do as they wish
 RUN fix-permissions $CONDA_DIR && \
