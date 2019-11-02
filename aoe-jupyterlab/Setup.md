@@ -116,3 +116,10 @@ kubectl get pod --namespace jhub
 kubectl get service
 ```
 
+# Troubleshooting
+
+## if a pod fails
+debug the pod
+```sh
+kubectl describe pod --namespace jhub <podname>
+```
