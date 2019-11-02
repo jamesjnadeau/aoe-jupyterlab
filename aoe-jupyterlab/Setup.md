@@ -72,6 +72,18 @@ kubectl get node
 ```
 wait for hub and proxy nodes to be ready
 
+## Create Static Ip
+see https://docs.microsoft.com/en-us/azure/aks/static-ip
+
+```sh
+
+az network public-ip create \
+    --resource-group MC_JupyterHub_JupyterHub_northcentralus \
+    --name myAKSPublicIP \
+    --allocation-method static
+```
+set up dns based on this ip so ssl will work.
+
 ## Create tiller service account
 note that helm comes pre-installed in azure cloud shell
 from https://docs.microsoft.com/en-us/azure/aks/kubernetes-helm
