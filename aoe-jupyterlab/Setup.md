@@ -38,6 +38,19 @@ cd JupyterHub
 ssh-keygen -f ssh-key-JupyterHub
 ```
 
+## Create Static Ip
+see https://docs.microsoft.com/en-us/azure/aks/static-ip
+
+```sh
+
+az network public-ip create \
+    --resource-group MC_JupyterHub_JupyterHub_northcentralus \
+    --name myAKSPublicIP \
+    --allocation-method static
+```
+note id and ip, set up dns with this ip
+
+
 ## Create Cluster
 
 ```sh
@@ -51,7 +64,9 @@ az aks create --name JupyterHub \
               --min-count 3 \
               --max-count 6 \
               --kubernetes-version 1.14.8 \
+              --load-balancer-outbound-ips <ip id from above>\
               --output table
+              
 ```
 wait...
 
