@@ -25,7 +25,7 @@ az aks create --name JupyterHub \
               --enable-cluster-autoscaler \
               --min-count 3 \
               --max-count 6 \
-              --kubernetes-version 1.14.6 \
+              --kubernetes-version 1.14.8 \
               --output table
 ```
 
