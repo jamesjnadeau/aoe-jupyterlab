@@ -1,3 +1,13 @@
+# How to set up a JupyterHub Cluster in Azure
+This is a cliff notes version of https://zero-to-jupyterhub.readthedocs.io/en/latest/index.html
+so please follow along there as well.
+
+## Select proper subscription
+
+```
+az account list --refresh --output table
+```
+
 ## Ensure multiple node pools is enabled
  See https://docs.microsoft.com/en-us/azure/aks/use-multiple-node-pools#before-you-begin
 ```
@@ -5,12 +15,27 @@ az feature register --name MultiAgentpoolPreview --namespace Microsoft.Container
 ```
 
 ## Create Resource Group
+you only need to do this once
 
 ```sh
 az group create \
               --name=JupyterHub \
               --location=northcentralus \
               --output table
+```
+
+## Create Local Config for Cluster
+you only need to do this once, but need to return to this directory to perform these operations below
+
+```sh
+mkdir JupyterHub
+cd JupyterHub
+```
+
+## Generate SSL Key for Auth
+
+```
+ssh-keygen -f ssh-key-JupyterHub
 ```
 
 ## Create Cluster
@@ -28,34 +53,60 @@ az aks create --name JupyterHub \
               --kubernetes-version 1.14.8 \
               --output table
 ```
+wait...
 
 ## Get Credentials
 ```sh
 az aks get-credentials \
              --name JupyterHub \
-             --resource-group JupyterHub> \
+             --resource-group JupyterHub \
              --output table
 ```
 
-# Create tiller service account
+## Check Cluster Node status
+
+```sh
+kubectl get node
+```
+
+## Create tiller service account
+note that helm comes pre-installed in azure cloud shell
 from https://docs.microsoft.com/en-us/azure/aks/kubernetes-helm
 ```sh
 kubectl apply -f helm-rbac.yaml
+
+helm init --service-account tiller --wait
+```
+if all went well, this will remport back like so:
+```sh
+$ helm version
+Client: &version.Version{SemVer:"v2.15.2", GitCommit:"8dce272473e5f2a7bf58ce79bb5c3691db54c96b", GitTreeState:"clean"}
+Server: &version.Version{SemVer:"v2.15.2", GitCommit:"8dce272473e5f2a7bf58ce79bb5c3691db54c96b", GitTreeState:"clean"}
+```
+## Add Helm Charts
+```sh
+helm repo add jupyterhub https://jupyterhub.github.io/helm-chart/
+helm repo update
 ```
 
+
+### TODO apply ssl security to tiller
+
 this one didn't work
-```sh
-helm upgrade --install jhub jupyterhub/jupyterhub \
-  --namespace jhub  \
-  --version=1.0.0 \
-  --values config.yaml
-```
 
 ```sh
 helm install jupyterhub/jupyterhub \
-    --set controller.nodeSelector."beta\.kubernetes\.io/os"=linux \
-    --set defaultBackend.nodeSelector."beta\.kubernetes\.io/os"=linux \
-    --values config.yaml
+  --namespace jhub \
+  --set controller.nodeSelector."beta\.kubernetes\.io/os"=linux \
+  --set defaultBackend.nodeSelector."beta\.kubernetes\.io/os"=linux \
+  --values config.yaml \
+  --timeout=1800
+```
+wait... this might timeout
+
+check status
+```sh
+kubectl get pod --namespace jhub
 ```
 
 ## get public ip
