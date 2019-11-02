@@ -68,6 +68,7 @@ az aks get-credentials \
 ```sh
 kubectl get node
 ```
+wait for hub and proxy nodes to be ready
 
 ## Create tiller service account
 note that helm comes pre-installed in azure cloud shell
