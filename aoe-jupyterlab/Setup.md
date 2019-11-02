@@ -29,6 +29,7 @@ az aks create --name JupyterHub \
               --output table
 ```
 
+## Get Credentials
 ```sh
 az aks get-credentials \
              --name JupyterHub \
