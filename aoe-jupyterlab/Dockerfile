@@ -1,12 +1,18 @@
 FROM jupyter/scipy-notebook:1386e2046833
 
+ARG NB_USER="jovyan"
+ARG NB_UID="1000"
+ARG NB_GID="100"
+
+USER $NB_UID
+
 ENV JUPYTER_ENABLE_LAB yes
 
 # Install the packages we need
 RUN conda install --yes -c conda-forge "nodejs=10.8" ipywidgets ipython-sql pymssql pyodbc \
-  python-dotenv nbstripout cx_Oracle papermill pywinauto r-irkernel chardet watchdog Faker && \
-  conda clean -a
-RUN pip install "jupyterlab==1.1.4" voila
+  python-dotenv nbstripout cx_Oracle papermill pywinauto r-irkernel chardet watchdog Faker \
+  jupyterlab=1.2.1 voila \
+  && conda clean -a
 
 # Lab Extensions
 ENV NODE_OPTIONS="--max-old-space-size=4096"
@@ -23,7 +29,8 @@ RUN jupyter labextension install @jupyter-widgets/jupyterlab-manager@1.0 --no-bu
   # rm -rf $HOME/.local 
 
 # Copy in our custom extension that loads our init.ipynb 
-COPY aoe_init.py /home/$NB_USER/.ipython/extensions/aoe_init.py
+COPY --chown=$NB_UID:$NB_GID aoe_init.py /home/$NB_USER/.ipython/extensions/aoe_init.py
+RUN jupyter notebook --generate-config -y
 
 # fix permissions on folders so end user can do as they wish
 RUN fix-permissions $CONDA_DIR && \
