@@ -41,6 +41,8 @@ ssh-keygen -f ssh-key-JupyterHub
 
 ## Create Cluster
 
+**Note** It's possible to do this step through the gui if you so choose
+
 ```sh
 az aks create --name JupyterHub \
               --resource-group JupyterHub \
